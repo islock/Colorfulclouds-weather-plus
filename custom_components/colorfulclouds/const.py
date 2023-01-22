@@ -9,11 +9,12 @@ REQUIRED_FILES = [
     "manifest.json",
     "weather.py",
     "config_flow.py",
-    "services.yaml",
     "translations/en.json",
 ]
-VERSION = "0.1.3"
+VERSION = "2023.1.22"
 ISSUE_URL = "https://github.com/fineemb/Colorfulclouds-weather/issues"
+
+ROOT_PATH = '/colorfulclouds-local'
 
 STARTUP = """
 -------------------------------------------------------------------
@@ -58,6 +59,7 @@ CONF_API_VERSION = "api_version"
 CONF_LATITUDE = "latitude"
 CONF_LONGITUDE = "longitude"
 CONF_ALERT = "alert"
+CONF_LIFEINDEX = "life"
 CONF_HOURLYSTEPS = "hourlysteps"
 CONF_DAILYSTEPS = "dailysteps"
 CONF_STARTTIME = "starttime"
@@ -77,7 +79,7 @@ SENSOR_TYPES = {
     "apparent_temperature": {
         ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
         ATTR_ICON: None,
-        ATTR_LABEL: "感觉温度",
+        ATTR_LABEL: "体感温度",
         ATTR_UNIT_METRIC: TEMP_CELSIUS,
         ATTR_UNIT_IMPERIAL: TEMP_FAHRENHEIT,
     },
@@ -150,6 +152,13 @@ SENSOR_TYPES = {
         ATTR_LABEL: "风向",
         ATTR_UNIT_METRIC: DEGREE,
         ATTR_UNIT_IMPERIAL: DEGREE,
+    },
+    "update_time": {
+        ATTR_DEVICE_CLASS: None,
+        ATTR_ICON: "mdi:update",
+        ATTR_LABEL: "更新",
+        ATTR_UNIT_METRIC: None,
+        ATTR_UNIT_IMPERIAL: None,
     },
 }
 

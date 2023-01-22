@@ -4,9 +4,9 @@
   "documentation": "https://github.com/fineemb/Colorfulclouds-weather",
   "issue_tracker": "https://github.com/fineemb/Colorfulclouds-weather/issues",
   "dependencies": [],
-  "version": "1.2.6",
+  "version": "2.0.0",
   "iot_class": "cloud_polling", 
   "config_flow": true,
-  "codeowners": ["@fineemb"],
+  "codeowners": ["@fineemb,@dscao"],
   "requirements": []
 }

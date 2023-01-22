@@ -14,6 +14,7 @@ from .const import (
     CONF_HOURLYSTEPS,
     CONF_DAILYSTEPS,
     CONF_ALERT,
+    CONF_LIFEINDEX,
     CONF_STARTTIME
     )
 import voluptuous as vol
@@ -66,9 +67,9 @@ class ColorfulcloudslowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     async def _show_config_form(self, user_input):
 
         # Defaults
-        api_version = "v2.5"
+        api_version = "v2.6"
         data_schema = OrderedDict()
-        data_schema[vol.Required(CONF_API_KEY)] = str
+        data_schema[vol.Optional(CONF_API_KEY, default="UR8ASaXXXXXXXX")] = str
         data_schema[vol.Optional("api_version", default=api_version)] = str
         data_schema[vol.Optional(CONF_LONGITUDE, default=self.hass.config.longitude)] = cv.longitude
         data_schema[vol.Optional(CONF_LATITUDE, default=self.hass.config.latitude)] = cv.latitude
@@ -128,6 +129,10 @@ class ColorfulcloudsOptionsFlow(config_entries.OptionsFlow):
                     vol.Optional(
                         CONF_ALERT,
                         default=self.config_entry.options.get(CONF_ALERT, True),
+                    ): bool,
+                    vol.Optional(
+                        CONF_LIFEINDEX,
+                        default=self.config_entry.options.get(CONF_LIFEINDEX, False),
                     ): bool
                 }
             ),

@@ -1,13 +1,17 @@
 """Support for the Colorfulclouds service."""
 import logging
+
 from homeassistant.const import (
     ATTR_ATTRIBUTION,
     ATTR_DEVICE_CLASS,
     CONF_NAME,
     DEVICE_CLASS_TEMPERATURE,
 )
+import time
+
+from datetime import datetime, timedelta
+
 from homeassistant.helpers.entity import Entity
-from homeassistant.helpers.device_registry import DeviceEntryType
 
 from .const import (
     ATTR_ICON,
@@ -73,18 +77,26 @@ class ColorfulcloudsSensor(Entity):
         """Return a unique_id for this entity."""
         # if self.forecast_day is not None:
         #     return f"{self.coordinator.location_key}-{self.kind}-{self.forecast_day}".lower()
-        _LOGGER.info("sensor_unique_id: %s", self.coordinator.data["location_key"])
+        _LOGGER.info("sensor_unique_id: %s-%s", self.coordinator.data["location_key"], self.kind)
         return f"{self.coordinator.data['location_key']}-{self.kind}".lower()
 
     @property
     def device_info(self):
         """Return the device info."""
-        return {
+        info = {
             "identifiers": {(DOMAIN, self.coordinator.data["location_key"])},
             "name": self._name,
             "manufacturer": MANUFACTURER,
-            "entry_type": DeviceEntryType.SERVICE,
         }
+        # LEGACY can be removed when min HA version is 2021.12
+        info = {
+            "identifiers": {(DOMAIN, self.coordinator.data["location_key"])},
+            "name": self._name,
+            "manufacturer": MANUFACTURER,
+        }        
+        from homeassistant.helpers.device_registry import DeviceEntryType
+        info["entry_type"] = DeviceEntryType.SERVICE        
+        return info
 
     @property
     def should_poll(self):
@@ -94,7 +106,8 @@ class ColorfulcloudsSensor(Entity):
     @property
     def available(self):
         """Return True if entity is available."""
-        return self.coordinator.last_update_success
+        #return self.coordinator.last_update_success
+        return (int(datetime.now().timestamp()) - int(self.coordinator.data["server_time"]) < 1800)
 
     @property
     def state(self):
@@ -119,7 +132,7 @@ class ColorfulcloudsSensor(Entity):
         if self.kind == "apparent_temperature":
             return self.coordinator.data["result"]["realtime"][self.kind]
         if self.kind == "pressure":
-            return self.coordinator.data["result"]["realtime"][self.kind]
+            return round(float(self.coordinator.data["result"]["realtime"][self.kind])/100)
         if self.kind == "temperature":
             return self.coordinator.data["result"]["realtime"][self.kind]
         if self.kind == "humidity":
@@ -138,6 +151,8 @@ class ColorfulcloudsSensor(Entity):
             return self.coordinator.data["result"]["realtime"]["life_index"]["ultraviolet"]["index"]
         if self.kind == "precipitation":
             return self.coordinator.data["result"]["realtime"]["precipitation"]["local"]["intensity"]
+        if self.kind == "update_time":
+            return datetime.fromtimestamp(self.coordinator.data["server_time"]) 
 
     @property
     def icon(self):

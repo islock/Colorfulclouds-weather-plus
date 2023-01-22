@@ -1,33 +1,40 @@
-
-
-
-
 import logging
 import json
+import time
 from datetime import datetime, timedelta
-
-from homeassistant.helpers.device_registry import DeviceEntryType
 from homeassistant.components.weather import (
-    WeatherEntity, 
-    ATTR_FORECAST_CONDITION, 
-    ATTR_FORECAST_PRECIPITATION,
-    ATTR_FORECAST_TEMP, 
-    ATTR_FORECAST_TEMP_LOW, 
-    ATTR_FORECAST_TIME, 
-    ATTR_FORECAST_WIND_BEARING, 
-    ATTR_FORECAST_WIND_SPEED
+    ATTR_FORECAST_CONDITION,
+    ATTR_FORECAST_NATIVE_PRECIPITATION,
+    ATTR_FORECAST_NATIVE_TEMP,
+    ATTR_FORECAST_NATIVE_TEMP_LOW,
+    ATTR_FORECAST_NATIVE_WIND_SPEED,
+    ATTR_FORECAST_PRECIPITATION_PROBABILITY,
+    ATTR_FORECAST_TIME,
+    ATTR_FORECAST_WIND_BEARING,
+    Forecast,
+    WeatherEntity,
 )
 from homeassistant.const import (
-    TEMP_CELSIUS, 
-    TEMP_FAHRENHEIT, 
-    CONF_NAME
+    CONF_NAME,
+    LENGTH_INCHES,
+    LENGTH_KILOMETERS,
+    LENGTH_MILES,
+    LENGTH_MILLIMETERS,
+    PRESSURE_HPA,
+    PRESSURE_INHG,
+    SPEED_KILOMETERS_PER_HOUR,
+    SPEED_MILES_PER_HOUR,
+    TEMP_CELSIUS,
+    TEMP_FAHRENHEIT,
 )
 from .const import (
     ATTRIBUTION,
     COORDINATOR,
+    ROOT_PATH,
     DOMAIN,
     NAME,
-    MANUFACTURER
+    MANUFACTURER,
+    CONF_LIFEINDEX,
 )
 
 PARALLEL_UPDATES = 1
@@ -59,28 +66,86 @@ CONDITION_MAP = {
     'WIND': 'windy',
     'HAZE': 'fog',
     'RAIN': 'rainy',
-    'SNOW': 'snowy'
+    'SNOW': 'snowy',
 }
 
-async def async_setup_entry(hass, config_entry, async_add_entities):
+TRANSLATE_SUGGESTION = {
+    'AnglingIndex': '钓鱼指数',
+    'AirConditionerIndex': '空调开机指数',
+    'AllergyIndex': '过敏指数',
+    'HeatstrokeIndex': '中暑指数',
+    'RainGearIndex': '雨具指数',
+    'DryingIndex': '晾晒指数',
+    'WindColdIndex': '风寒指数',
+    'KiteIndex': '风筝指数',
+    'MorningExerciseIndex': '晨练指数',
+    'UltravioletIndex': '紫外线指数',
+    'DrinkingIndex': '饮酒指数',
+    'ComfortIndex': '舒适指数',
+    'CarWashingIndex': '洗车指数',
+    'DressingIndex': '穿衣指数',
+    'ColdRiskIndex': '感冒指数',
+    'AQIIndex': '空气污染指数',
+    'WashClothesIndex': '洗衣指数',
+    'MakeUpIndex': '化妆指数',
+    'MoodIndex': '情绪指数',
+    'SportIndex': '运动指数',
+    'TravelIndex': '旅游指数',
+    'DatingIndex': '交友指数',
+    'ShoppingIndex': '逛街指数',
+    'HairdressingIndex': '美发指数',
+    'NightLifeIndex': '夜生活',
+    'BoatingIndex': '划船指数',
+    'RoadConditionIndex': '路况指数',
+    'TrafficIndex': '交通指数',
+    'ultraviolet': '紫外线',
+    'carWashing': '洗车指数',
+    'dressing': '穿衣指数',
+    'comfort': '舒适度指数',
+    'coldRisk': '感冒指数',
+}
+
+ATTR_SUGGESTION = "suggestion"
+
+async def async_setup_entry(hass, config_entry, async_add_entities):    
     """Add a Colorfulclouds weather entity from a config_entry."""
     name = config_entry.data[CONF_NAME]
+    life = config_entry.options.get(CONF_LIFEINDEX, False)
 
     coordinator = hass.data[DOMAIN][config_entry.entry_id][COORDINATOR]
     _LOGGER.debug("metric: %s", coordinator.data["is_metric"])
 
-    async_add_entities([ColorfulCloudsEntity(name, coordinator)], False)
+    async_add_entities([ColorfulCloudsEntity(name, life, coordinator)], False)
             
 class ColorfulCloudsEntity(WeatherEntity):
     """Representation of a weather condition."""
 
-    def __init__(self, name, coordinator):
+    def __init__(self, name, life, coordinator):
         
         self.coordinator = coordinator
         _LOGGER.debug("coordinator: %s", coordinator.data["server_time"])
         self._name = name
+        self.life = life
         self._attrs = {}
-        self._unit_system = "Metric" if self.coordinator.data["is_metric"]=="metric:v2" else "Imperial"
+        # self._unit_system = "Metric" if self.coordinator.data["is_metric"]=="metric:v2" else "Imperial"
+        # Coordinator data is used also for sensors which don't have units automatically
+        # converted, hence the weather entity's native units follow the configured unit
+        # system
+        if self.coordinator.data["is_metric"]=="metric:v2":
+            self._attr_native_precipitation_unit = LENGTH_MILLIMETERS
+            self._attr_native_pressure_unit = PRESSURE_HPA
+            self._attr_native_temperature_unit = TEMP_CELSIUS
+            self._attr_native_visibility_unit = LENGTH_KILOMETERS
+            self._attr_native_wind_speed_unit = SPEED_KILOMETERS_PER_HOUR
+            self._unit_system = "Metric"
+        else:
+            self._unit_system = "Imperial"
+            self._attr_native_precipitation_unit = LENGTH_INCHES
+            self._attr_native_pressure_unit = PRESSURE_INHG
+            self._attr_native_temperature_unit = TEMP_FAHRENHEIT
+            self._attr_native_visibility_unit = LENGTH_MILES
+            self._attr_native_wind_speed_unit = SPEED_MILES_PER_HOUR
+        
 
     @property
     def name(self):
@@ -100,12 +165,15 @@ class ColorfulCloudsEntity(WeatherEntity):
     @property
     def device_info(self):
         """Return the device info."""
-        return {
+        info = {
             "identifiers": {(DOMAIN, self.coordinator.data["location_key"])},
             "name": self._name,
             "manufacturer": MANUFACTURER,
-            "entry_type": DeviceEntryType.SERVICE,
-        }
+        }        
+        from homeassistant.helpers.device_registry import DeviceEntryType
+        info["entry_type"] = DeviceEntryType.SERVICE        
+        return info
+
     @property
     def should_poll(self):
         """Return the polling requirement of the entity."""
@@ -114,7 +182,8 @@ class ColorfulCloudsEntity(WeatherEntity):
     @property
     def available(self):
         """Return True if entity is available."""
-        return self.coordinator.last_update_success
+        #return self.coordinator.last_update_success
+        return (int(datetime.now().timestamp()) - int(self.coordinator.data["server_time"]) < 1800)
         
     @property
     def condition(self):
@@ -125,10 +194,6 @@ class ColorfulCloudsEntity(WeatherEntity):
     @property
     def native_temperature(self):
         return self.coordinator.data["result"]['realtime']['temperature']
-
-    @property
-    def native_temperature_unit(self):
-        return TEMP_CELSIUS if self.coordinator.data["is_metric"]=="metric:v2" else TEMP_FAHRENHEIT
 
     @property
     def humidity(self):
@@ -151,7 +216,7 @@ class ColorfulCloudsEntity(WeatherEntity):
 
     @property
     def native_pressure(self):
-        return self.coordinator.data["result"]['realtime']['pressure']
+        return round(float(self.coordinator.data["result"]['realtime']['pressure'])/100)
 
     @property
     def pm25(self):
@@ -224,15 +289,19 @@ class ColorfulCloudsEntity(WeatherEntity):
         alert = self.coordinator.data['result']['alert'] if 'alert' in self.coordinator.data['result'] else ""
         return alert
         
-        
-        
     @property
     def forecast_keypoint(self):
         """实时天气预报描述-注意事项"""
-        return self.coordinator.data['result']['forecast_keypoint']
-
+        return self.coordinator.data['result']['forecast_keypoint']        
+        
+    @property
+    def updatetime(self):
+        """实时天气预报获取时间."""
+        return datetime.fromtimestamp(self.coordinator.data['server_time'])    
+        
     @property
     def state_attributes(self):
+        _LOGGER.debug(self.coordinator.data)
         data = super(ColorfulCloudsEntity, self).state_attributes
         data['forecast_hourly'] = self.forecast_hourly
         data['forecast_minutely'] = self.forecast_minutely
@@ -250,6 +319,7 @@ class ColorfulCloudsEntity(WeatherEntity):
         data['aqi_description'] = self.aqi_description
         data['aqi_usa'] = self.aqi_usa
         data['aqi_usa_description'] = self.aqi_usa_description
+        data['update_time'] = self.updatetime
 
         data['hourly_precipitation'] = self.coordinator.data['result']['hourly']['precipitation']
         data['hourly_temperature'] = self.coordinator.data['result']['hourly']['temperature']
@@ -260,6 +330,9 @@ class ColorfulCloudsEntity(WeatherEntity):
         data['hourly_aqi'] = self.coordinator.data['result']['hourly']['air_quality']['aqi']
         data['hourly_pm25'] = self.coordinator.data['result']['hourly']['air_quality']['pm25']
         
+        if self.life == True:
+            data[ATTR_SUGGESTION] = [{'title': k, 'title_cn': TRANSLATE_SUGGESTION.get(k,k), 'brf': v.get('desc'), 'txt': v.get('detail')} for k, v in self.coordinator.data['lifeindex'].items()]
+            data["custom_ui_more_info"] = "colorfulclouds-weather-more-info"        
         return data  
 
     @property
@@ -271,11 +344,11 @@ class ColorfulCloudsEntity(WeatherEntity):
                 ATTR_FORECAST_TIME: datetime.strptime(time_str, '%Y-%m-%d'),
                 ATTR_FORECAST_CONDITION: CONDITION_MAP[self.coordinator.data['result']['daily']['skycon'][i]['value']],
                 "skycon": self.coordinator.data['result']['daily']['skycon'][i]['value'],
-                ATTR_FORECAST_PRECIPITATION: self.coordinator.data['result']['daily']['precipitation'][i]['avg'],
-                ATTR_FORECAST_TEMP: self.coordinator.data['result']['daily']['temperature'][i]['max'],
-                ATTR_FORECAST_TEMP_LOW: self.coordinator.data['result']['daily']['temperature'][i]['min'],
+                ATTR_FORECAST_NATIVE_PRECIPITATION: self.coordinator.data['result']['daily']['precipitation'][i]['avg'],
+                ATTR_FORECAST_NATIVE_TEMP: self.coordinator.data['result']['daily']['temperature'][i]['max'],
+                ATTR_FORECAST_NATIVE_TEMP_LOW: self.coordinator.data['result']['daily']['temperature'][i]['min'],
                 ATTR_FORECAST_WIND_BEARING: self.coordinator.data['result']['daily']['wind'][i]['avg']['direction'],
-                ATTR_FORECAST_WIND_SPEED: self.coordinator.data['result']['daily']['wind'][i]['avg']['speed']
+                ATTR_FORECAST_NATIVE_WIND_SPEED: self.coordinator.data['result']['daily']['wind'][i]['avg']['speed']
             }
             forecast_data.append(data_dict)
 
@@ -289,8 +362,5 @@ class ColorfulCloudsEntity(WeatherEntity):
 
     async def async_update(self):
         """Update Colorfulclouds entity."""
-        _LOGGER.debug("weather_update: %s", self.coordinator.data['server_time'])
-        
         await self.coordinator.async_request_refresh()
         
-
