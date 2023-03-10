@@ -194,8 +194,9 @@ class ColorfulcloudsSensor(Entity):
             self._attrs["desc"] = self.coordinator.data["result"]["realtime"]["life_index"]["comfort"]["desc"]
         elif self.kind == "precipitation":
             self._attrs["datasource"] = self.coordinator.data["result"]["realtime"]["precipitation"]["local"]["datasource"]
-            self._attrs["nearest_intensity"] = self.coordinator.data["result"]["realtime"]["precipitation"]["nearest"]["intensity"]
-            self._attrs["nearest_distance"] = self.coordinator.data["result"]["realtime"]["precipitation"]["nearest"]["distance"]
+            if self.coordinator.data["result"]["realtime"]["precipitation"].get("nearest"):
+              self._attrs["nearest_intensity"] = self.coordinator.data["result"]["realtime"]["precipitation"]["nearest"]["intensity"]
+              self._attrs["nearest_distance"] = self.coordinator.data["result"]["realtime"]["precipitation"]["nearest"]["distance"]
         return self._attrs
 
     @property
