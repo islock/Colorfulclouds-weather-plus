@@ -332,7 +332,7 @@ class ColorfulCloudsEntity(WeatherEntity):
         
         if self.life == True:
             data[ATTR_SUGGESTION] = [{'title': k, 'title_cn': TRANSLATE_SUGGESTION.get(k,k), 'brf': v.get('desc'), 'txt': v.get('detail')} for k, v in self.coordinator.data['lifeindex'].items()]
-            # data["custom_ui_more_info"] = "colorfulclouds-weather-more-info"        
+            data["custom_ui_more_info"] = "colorfulclouds-weather-more-info"        
         return data  
 
     @property
