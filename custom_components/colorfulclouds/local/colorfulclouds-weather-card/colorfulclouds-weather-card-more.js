@@ -9,9 +9,6 @@ css
 } from "./lit-element@2.0.1/lit-element.js?module";
 // "https://unpkg.com/lit-element@2.0.1/lit-element.js?module";
 
-import { classMap } from 'https://unpkg.com/lit-html/directives/class-map.js?module';
-import { repeat } from 'https://unpkg.com/lit-html/directives/repeat.js?module';
-
 const locale = {
   'zh-Hans': {
     tempHi: "最高温度",
