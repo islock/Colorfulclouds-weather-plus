@@ -4,7 +4,7 @@
  * @Description   : 
  * @Date          : 2020-08-26 16:20:12
  * @LastEditors   : dscao
- * @LastEditTime  : 2023-01-22 22:28:28
+ * @LastEditTime  : 2023-06-20 16:28:28
 -->
 
 # 彩云天气
@@ -53,6 +53,20 @@
 + 免费或个人版api_key默认每6分钟刷新一次，生活指数为4项+紫外线强度；专业版以上api_key生活指数为28项丰富内容，28项生活指数每60分钟刷新一次。
 + 默认不开启生活指数，需在选项中勾选后显示。
 + 有天气预警信息时，卡片会红色显示预警信息。
+
++ ### v2.1
+
+适配ha 2023.6以后版本，增加一套卡片。
+从 https://github.com/Yevgenium/weather-chart-card 修改而来，配套彩云天气。
+```yaml
+type: custom:colorfulclouds_weather-chart-card
+entity: weather.wo_de_jia
+show_attributes: true
+show_hourly_forecast: true
+show_daily_forecast: true
+show_alarm: true
+show_main: true
+```
   
 ## 安装配置
 
@@ -61,3 +75,6 @@
 1、下载附件放到 config/custom_components 中重启（如果之前安装过上面提到的原版彩云天气，需要删除原来的卡片资源） \
 2、添加集成——colorfulclouds (彩云天气) ，按提示配置成功即可（需要先申请api_key）。\
 3、添加卡片——自定义：彩云天气 ，如果ui界面配置没显示，先改成代码编辑器，修改一下彩云天气的实体名，再改回界面编辑。
+
+![1](https://github.com/dscao/Colorfulclouds-weather/assets/16587914/0c88d311-80b6-40bf-9b82-6ee8aea296b3)
+
