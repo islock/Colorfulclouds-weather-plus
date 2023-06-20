@@ -49,13 +49,13 @@ _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS = ["sensor", "weather"]
 
-USER_AGENT = 'ColorfulCloudsPro/6.4.0 (iPhone; iOS 15.4.1; Scale/3.00)'
-DEVICE_ID= 'D9D380E8-B5DE-40CD-974D-8E36D84187B7'
+USER_AGENT = 'ColorfulCloudsPro/6.7.2 (iPhone; iOS 16.2; Scale/3.00)'
+DEVICE_ID= 'D9AB80E9-B5CE-40FD-96CD-8E38CF5287B7'
 headers = {'User-Agent': USER_AGENT,
           'device-id': DEVICE_ID,
           'Accept': 'application/json',
           'Accept-Language': 'zh-Hans-CN;q=1',
-		  'app-version': '6.4.0',
+		  'app-version': '6.7.2',
 		  'app_name': 'weather',
 		  'app-name': 'weather'}
           
@@ -69,9 +69,9 @@ async def async_setup_entry(hass, config_entry) -> bool:
     hass.http.register_static_path(ROOT_PATH, hass.config.path('custom_components/colorfulclouds/local'), False)
     _LOGGER.debug(f"register_static_path: {ROOT_PATH + ':custom_components/colorfulclouds/local'}")
     hass.components.frontend.add_extra_js_url(hass, ROOT_PATH + '/colorfulclouds-weather-card/colorfulclouds-weather-card.js?ver='+VERSION)
-    _LOGGER.debug(f"Add extra JS module: {ROOT_PATH + '/colorfulclouds-weather-card/colorfulclouds-weather-card.js?ver='+VERSION}")
+    hass.components.frontend.add_extra_js_url(hass, ROOT_PATH + '/colorfulclouds-weather-card/colorfulclouds-weather-card-chart.js?ver='+VERSION)
     hass.components.frontend.add_extra_js_url(hass, ROOT_PATH + '/colorfulclouds-weather-card/colorfulclouds-weather-card-more.js?ver='+VERSION)
-    _LOGGER.debug(f"Add extra JS module: {ROOT_PATH + '/colorfulclouds-weather-card/colorfulclouds-weather-card-more.js?ver='+VERSION}")
+    
     _LOGGER.info("setup platform weather.colorfulclouds...")
     
     """Set up Colorfulclouds as config entry."""
