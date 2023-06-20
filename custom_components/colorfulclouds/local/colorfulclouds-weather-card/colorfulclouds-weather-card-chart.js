@@ -15033,7 +15033,7 @@
             },
             PrecipAxis: {
               position: 'right',
-              suggestedMax: 50,
+              suggestedMax: 5,
               grid: {
                 display: false,
                 drawBorder: false,
