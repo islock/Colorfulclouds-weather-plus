@@ -17,8 +17,6 @@
 
 在这个基础上,返回了彩云能够提供的所有数据.
 
-配合此集成的[前端卡片](https://github.com/fineemb/lovelace-colorfulclouds-weather-card)
-
 ## 更新
 
 + ### v1.1
