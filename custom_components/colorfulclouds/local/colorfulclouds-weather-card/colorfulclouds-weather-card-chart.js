@@ -79,7 +79,7 @@
       'fog': '雾',
       'hail': '冰雹',
       'lightning': '闪电',
-      'lightning-rainy': '闪电，下雨',
+      'lightning-rainy': '雷雨',
       'partlycloudy': '多云',
       'pouring': '暴雨',
       'rainy': '雨',
@@ -15495,12 +15495,12 @@
           display: flex;
         }
         .title {
-          margin-left: 16px;
-          font-size: 16px;
+          margin-left: 6px;
+          font-size: 12px;
           color: var(--secondary-text-color);
         }
         .time {
-          font-size: 16px;
+          font-size: 12px;
           color: var(--secondary-text-color);
           align-items: center;
         }
@@ -15706,14 +15706,14 @@
         </div>
         <div style="cursor: pointer;" @click="${(e) => this.showMoreInfo(sun.entity)}">
           ${this.renderSun()}
-        </div>
-        <div>
-          <ha-icon icon="mdi:blur"></ha-icon> PM2.5: ${weather.attributes.pm25}<br>
-          <ha-icon icon="mdi:blur"></ha-icon> PM10: ${weather.attributes.pm10}
-        </div>
+        </div>        
 		<div>
           <ha-icon icon="hass:${this.getWindDirIcon(windDirection)}"></ha-icon> ${this.getWindDir(windDirection)}<br>
           <ha-icon icon="hass:weather-windy"></ha-icon> ${windSpeed} ${this.ll('units')[this.unitSpeed]}
+        </div>
+		<div>
+          <ha-icon icon="mdi:blur"></ha-icon> PM25: ${weather.attributes.pm25}<br>
+          <ha-icon icon="mdi:blur"></ha-icon> PM10: ${weather.attributes.pm10}
         </div>
       </div>
     `;
