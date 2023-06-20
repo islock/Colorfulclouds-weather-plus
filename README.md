@@ -47,17 +47,17 @@
   
 + ### v2.0
 
-对原版进行了个性化修改，主要区别：
-+ 卡片在集成中打包，直接配置集成后即可使用 custom:colorfulclouds_weather-card 卡片。
-+ 仿和风天气卡片，增加天气实体信息中显示“生活指数”信息。
-+ 免费或个人版api_key默认每6分钟刷新一次，生活指数为4项+紫外线强度；专业版以上api_key生活指数为28项丰富内容，28项生活指数每60分钟刷新一次。
-+ 默认不开启生活指数，需在选项中勾选后显示。
-+ 有天气预警信息时，卡片会红色显示预警信息。
+  对原版进行了个性化修改，主要区别：
+  + 卡片在集成中打包，直接配置集成后即可使用 custom:colorfulclouds_weather-card 卡片。
+  + 仿和风天气卡片，增加天气实体信息中显示“生活指数”信息。
+  + 免费或个人版api_key默认每6分钟刷新一次，生活指数为4项+紫外线强度；专业版以上api_key生活指数为28项丰富内容，28项生活指数每60分钟刷新一次。
+  + 默认不开启生活指数，需在选项中勾选后显示。
+  + 有天气预警信息时，卡片会红色显示预警信息。
 
 + ### v2.1
 
-适配ha 2023.6以后版本，增加一套卡片。
-从 https://github.com/Yevgenium/weather-chart-card 修改而来，配套彩云天气。
+  适配ha 2023.6以后版本，增加一套卡片。
+  从 https://github.com/Yevgenium/weather-chart-card 修改而来，配套彩云天气。
 ```yaml
 type: custom:colorfulclouds_weather-chart-card
 entity: weather.wo_de_jia
