@@ -14747,6 +14747,8 @@
     static getStubConfig() {
       return {
 		"entity": "weather.wo_de_jia",
+		"name": "",
+		"icon": "",
 		"show_attributes": true,
 		"show_hourly_forecast": true,
 		"show_daily_forecast": true,
@@ -14860,7 +14862,7 @@
     }
 	
 	getWeatherIconurl(condition, sun) {
-        return `/hf_weather-local/hf_weather-card/picicons/animated/${
+        return `${this.iconUrl ? this.iconUrl : ""}/${
         sun == 'below_horizon'
         ? weatherIconsNight[condition]
         : weatherIconsDay[condition]}.svg`
@@ -15395,7 +15397,7 @@
 			</ha-card>
 		  `;
 		}
-	  const iconUrl = config.icon || '/colorfulclouds-local/colorfulclouds-weather-card/weathericons/';
+	    const iconUrl = config.icon || '/colorfulclouds-local/colorfulclouds-weather-card/weathericons/';
 		const lang = _hass.selectedLanguage || _hass.language;
 		const next_rising = new Date(_hass.states["sun.sun"].attributes.next_rising);
 		const next_setting = new Date(_hass.states["sun.sun"].attributes.next_setting);  
@@ -15442,7 +15444,7 @@
           </div>  
 		  <div class="conditions">
             ${forecast.map((item) => p`
-            <i class="icon" style="background: none, url(${this.getWeatherIconurl(item.condition)}) no-repeat; background-size: contain;" title="${this.ll(item.condition)}"></i>
+            <i class="icon" style="background: none, url(${iconUrl}${item.skycon}.svg) no-repeat; background-size: contain;" title="${this.ll(item.condition)}"></i>
             `)}
           </div>`}
 		  ${config.hourly_forecast == false ? ``: p`
@@ -15605,13 +15607,13 @@
       </style>
       <div class="header">
           <div style="align-items: baseline;">
-            <div style="align-items: center;">
+            <div style="align-items: center; cursor: pointer;" @click="${(e) => this.showMoreInfo(config.entity)}">
               ${this.ll(weather.state)}
               ${this._showValue(weather.attributes.aqi) ? p`
                 <div class = "aqi ${this.aqiLevel(weather.attributes.aqi)}">${this.roundNumber(weather.attributes.aqi)}</div>
               ` : ''}
             </div>
-            <div class="title">${config.title}</div>
+            <div class="title">${config.name}</div>
           </div>
           <div class="time">
             <ha-icon icon="mdi:update"></ha-icon>
@@ -15620,7 +15622,7 @@
       </div>
 	  <div class="now">
 		<div class="main">
-		  <i class="icon bigger" style="background: none, url(${this.getWeatherIconurl(weather.state)}) no-repeat; background-size: contain;"></i>
+		  <i class="icon bigger" style="background: none, url(${config.icon || '/colorfulclouds-local/colorfulclouds-weather-card/weathericons/'}${weather.attributes.skycon}.svg) no-repeat; background-size: contain; cursor: pointer;" @click="${(e) => this.showMoreInfo(config.entity)}"></i>
 		  ${this._showValue(temperature) ? p`
 			<div style="cursor: pointer;" @click="${(e) => this.showMoreInfo(config.entity)}">${this.roundNumber(temperature)}<sup>${this.getUnit('temperature')}</sup></div>
 		  ` : p`
