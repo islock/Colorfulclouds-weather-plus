@@ -15629,7 +15629,8 @@
 			<div style="cursor: pointer;" @click="${(e) => this.showMoreInfo(config.entity)}">${this.roundNumber(weather.attributes.temperature)}<sup>${weather.attributes.temperature_unit}</sup></div>
 		  `}		  
 		</div>
-
+        ${weather.attributes.suggestion ? p`
+			${weather.attributes.suggestion.length > 5 ? p`
 		<div class="suggestion" @click="${(e) => this.showMoreInfo(config.entity)}">
 		  <div>
 			<span> 舒适：${this.getSuggestion("ComfortIndex")}</span><br>
@@ -15644,6 +15645,17 @@
 			<span> 洗车：${this.getSuggestion("CarWashingIndex")}</span><br>
 		  </div>
 		</div>
+		` : p`
+		<div class="suggestion" @click="${(e) => this.showMoreInfo(config.entity)}">
+		  <div>
+			<span> 紫外：${this.getSuggestion("ultraviolet")}</span><br>
+			<span> 舒适：${this.getSuggestion("comfort")}</span><br>
+			<span> 感冒：${this.getSuggestion("coldRisk")}</span><br>
+			<span> 洗车：${this.getSuggestion("carWashing")}</span><br>	
+		  </div>
+		</div>
+		`}
+		` : ""}
       </div>
     `;
     }
