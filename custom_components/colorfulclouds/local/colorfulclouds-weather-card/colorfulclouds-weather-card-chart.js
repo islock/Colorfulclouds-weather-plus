@@ -15689,7 +15689,7 @@
 		`;
 	}
 
-    renderAttributes({config, humidity, pressure, windSpeed, windDirection} = this) {
+    renderAttributes({config, weather, humidity, pressure, windSpeed, windDirection} = this) {
       if (this.unitSpeed === 'm/s') {
         windSpeed = Math.round(windSpeed * 1000 / 3600);
       }
@@ -15708,6 +15708,10 @@
           ${this.renderSun()}
         </div>
         <div>
+          <ha-icon icon="mdi:blur"></ha-icon> PM2.5: ${weather.attributes.pm25}<br>
+          <ha-icon icon="mdi:blur"></ha-icon> PM10: ${weather.attributes.pm10}
+        </div>
+		<div>
           <ha-icon icon="hass:${this.getWindDirIcon(windDirection)}"></ha-icon> ${this.getWindDir(windDirection)}<br>
           <ha-icon icon="hass:weather-windy"></ha-icon> ${windSpeed} ${this.ll('units')[this.unitSpeed]}
         </div>
