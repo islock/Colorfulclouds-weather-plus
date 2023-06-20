@@ -355,7 +355,10 @@ class WeatherCard extends LitElement {
 						  <br /><i
 							class="icon"
 							style="background: none, url(${iconUrl}${daily.skycon}.svg) no-repeat; background-size: contain;"
+							title="${skycon2cn[daily.skycon]}"
 						  ></i>
+						  <br />
+						  <span>${skycon2cn[daily.skycon]}</span>
 						  <br /><span class="highTemp"
 							>${daily.temperature}${
 							  this.getUnit("temperature")
@@ -407,7 +410,7 @@ class WeatherCard extends LitElement {
 								  }
 							  )
 							  }</span>
-							<i class="icon" style="background: none${i>0 && attributes.hourly_skycon[i].value==attributes.hourly_skycon[i-1].value?"":", url("+iconUrl+attributes.hourly_skycon[i].value+".svg) no-repeat"}; background-size: contain;"></i>
+							<i class="icon" style="background: none${i>0 && attributes.hourly_skycon[i].value==attributes.hourly_skycon[i-1].value?"":", url("+iconUrl+attributes.hourly_skycon[i].value+".svg) no-repeat"}; background-size: contain;" title="${skycon2cn[attributes.hourly_skycon[i].value]}"></i>
 							<br />
 							<span class="dayname">.</span>
 							<span style="border-top-color: rgb(${this.tempCOLOR[i]});border-top-width:${(attributes.hourly_temperature[i].value-this.tempMIN)/(this.tempMAX-this.tempMIN)*7+3}px" class="dtemp">.</span>
