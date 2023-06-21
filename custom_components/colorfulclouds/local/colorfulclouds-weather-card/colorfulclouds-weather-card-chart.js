@@ -74,7 +74,7 @@
 	  aqiLevels: [
       '优', '良', '轻度污染', '中度污染', '重度污染', '严重污染'
       ],
-      'clear-night': '晴夜',
+      'clear-night': '晴',
       'cloudy': '阴',
       'fog': '雾',
       'hail': '冰雹',
@@ -15444,7 +15444,7 @@
           </div>  
 		  <div class="conditions">
             ${forecast.map((item) => p`
-            <i class="icon" style="background: none, url(${iconUrl}${item.skycon}.svg) no-repeat; background-size: contain;" title="${this.ll(item.condition)}"></i>
+            <i class="icon" style="background: none, url(${iconUrl}${item.skycon}.svg) no-repeat; background-size: contain;" title="${skycon2cn[item.skycon]}"></i>
             `)}
           </div>`}
 		  ${config.hourly_forecast == false ? ``: p`
@@ -15519,7 +15519,7 @@
         .main ha-icon {
           --iron-icon-height: 72px;
           --iron-icon-width: 72px;
-          margin-right: 8px;
+          margin-right: 4px;
         }
         .main div {
           cursor: pointer;
@@ -15536,7 +15536,7 @@
           justify-content: space-between;
         }
         .suggestion div {
-          margin-left: 10px;
+          margin-left: 8px;
         }
         .attributes {
           cursor: pointer;
@@ -15608,7 +15608,7 @@
       <div class="header">
           <div style="align-items: baseline;">
             <div style="align-items: center; cursor: pointer;" @click="${(e) => this.showMoreInfo(config.entity)}">
-              ${this.ll(weather.state)}
+              ${skycon2cn[weather.attributes.skycon]}
               ${this._showValue(weather.attributes.aqi) ? p`
                 <div class = "aqi ${this.aqiLevel(weather.attributes.aqi)}">${this.roundNumber(weather.attributes.aqi)}</div>
               ` : ''}
@@ -15633,14 +15633,14 @@
 			${weather.attributes.suggestion.length > 5 ? p`
 		<div class="suggestion" @click="${(e) => this.showMoreInfo(config.entity)}">
 		  <div>
-			<span> 舒适：${this.getSuggestion("ComfortIndex")}</span><br>
+			<span> 紫外：${this.getSuggestion("UltravioletIndex")}</span><br>
 			<span> 穿衣：${this.getSuggestion("DressingIndex")}</span><br>
 			<span> 空气：${this.getSuggestion("AQIIndex")}</span><br>
 			<span> 感冒：${this.getSuggestion("ColdRiskIndex")}</span><br>	
 		  </div>
 		  <div>          
-			<span> 紫外：${this.getSuggestion("UltravioletIndex")}</span><br>
 			<span> 运动：${this.getSuggestion("SportIndex")}</span><br>	
+			<span> 舒适：${this.getSuggestion("ComfortIndex")}</span><br>
 			<span> 旅游：${this.getSuggestion("TravelIndex")}</span><br>	
 			<span> 洗车：${this.getSuggestion("CarWashingIndex")}</span><br>
 		  </div>
