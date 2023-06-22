@@ -1,5 +1,5 @@
 {
-    "name": "彩云天气",
+    "name": "彩云天气 PLUS",
     "domains": ["weather","sensor"],
     "render_readme": true,
     "homeassistant": "2023.1.0",
